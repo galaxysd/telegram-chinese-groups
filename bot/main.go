@@ -15,6 +15,7 @@ func main() {
 	rc := redis.NewClient(&redis.Options{
 		Addr: "localhost:6379",
 	})
+	defer rc.Close()
 
 	conf, err := yaml.ReadFile("botconf.yaml")
 	if err != nil {

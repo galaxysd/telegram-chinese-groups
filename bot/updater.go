@@ -49,6 +49,7 @@ func (u *Updater) BotReply(msgText string) {
 func (u *Updater) Subscribe() {
 	chatIDStr := strconv.Itoa(u.update.Message.Chat.ID)
 	u.redis.HSet("tgSubscribe", chatIDStr, strconv.FormatBool(true))
+	u.redis.HIncrBy("tgSubscribeTimes", chatIDStr, 1)
 	msg := tgbotapi.NewMessage(u.update.Message.Chat.ID,
 		"订阅成功\n以后奴家知道新的群组的话，会第一时间告诉你哟😊\n(订阅仅对当前会话有效)")
 	u.bot.SendMessage(msg)
@@ -56,10 +57,22 @@ func (u *Updater) Subscribe() {
 
 func (u *Updater) UnSubscribe() {
 	chatIDStr := strconv.Itoa(u.update.Message.Chat.ID)
-	//u.redis.HSet("tgSubscribe", chatIDStr, strconv.FormatBool(false))
-	u.redis.HDel("tgSubscribe", chatIDStr)
-	msg := tgbotapi.NewMessage(u.update.Message.Chat.ID,
-		"好伤心，退订了就不能愉快的玩耍了呢😭")
+	var msg tgbotapi.MessageConfig
+	if u.redis.HExists("tgSubscribe", chatIDStr).Val() {
+		u.redis.HDel("tgSubscribe", chatIDStr)
+		times, _ := u.redis.HIncrBy("tgSubscribeTimes", chatIDStr, 1).Result()
+		if times > 5 {
+			msg = tgbotapi.NewMessage(u.update.Message.Chat.ID,
+				"订了退，退了订，你烦不烦嘛！！！⊂彡☆))∀`)`")
+			u.redis.HDel("tgSubscribeTimes", chatIDStr)
+		} else {
+			msg = tgbotapi.NewMessage(u.update.Message.Chat.ID,
+				"好伤心，退订了就不能愉快的玩耍了呢😭")
+		}
+	} else {
+		msg = tgbotapi.NewMessage(u.update.Message.Chat.ID,
+			"你都还没订阅，让人家怎么退订嘛！o(≧口≦)o")
+	}
 	u.bot.SendMessage(msg)
 }
 
