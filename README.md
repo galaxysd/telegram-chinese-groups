@@ -21,7 +21,7 @@ https://telegram.me/joinchat/05fe39f501af4d542fbcd38cfcad8ff4 ，
 若非特别声明，请勿在群组中发送 [NSFW](https://zh.wikipedia.org/wiki/NSFW) 或政治相关的图片/文字。<br/>
 以上规定适用于大部分群组。
 
-#### 已收录群组数量：102 个
+#### 已收录群组数量：103 个
 
 ## Linux
 - ArchLinux https://telegram.me/joinchat/05a78984013ee018c51a2bca4b5a6548
@@ -80,6 +80,7 @@ https://telegram.me/joinchat/05fe39f501af4d542fbcd38cfcad8ff4 ，
 - 番剧狂魔的中二世界 https://telegram.me/joinchat/0435790500c10772809916931ce7f814
 - 纯洁的我们«里番/NSFW» https://telegram.me/joinchat/0435790501ef92f06d7c1eb6a3cac629
 - VideoGamers https://telegram.me/joinchat/0617a42d01570a7438a5f9958d5470b8
+- Love Live! https://telegram.me/joinchat/051c9c2d02479453ae9452fe2bfd9ea7
 
 ## IT
 - Google Android https://telegram.me/joinchat/AknxJgFOKXAylGZbLnZ9zw
