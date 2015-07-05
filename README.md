@@ -64,6 +64,7 @@ https://telegram.me/joinchat/05fe39f501af4d542fbcd38cfcad8ff4 ，
 - 不看脑残片(话题为英美剧等) https://telegram.me/joinchat/0420f0bd0131450c0a0f4eadc9bafb48
 - 霹雳布袋戏 https://telegram.me/joinchat/06216bce0116eb56b2aa10ddb898fe5f
 - IPN听众群 https://telegram.me/joinchat/024fe4ea0137a7fe8c0fdeb871b439c6
+- Hi-Fi Audio https://telegram.me/joinchat/04a7528901c63ad6d81314564f6eb117
 
 ## 科幻
 - 神秘博士 https://telegram.me/joinchat/06a9c3e80259e5eecfbdb770de998961
