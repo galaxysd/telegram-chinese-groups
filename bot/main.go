@@ -70,7 +70,7 @@ func main() {
 		case "/software", "/software@" + botname:
 			go u.BotReply(YamlList2String(conf, "Software"))
 
-		case "/videos", "/videos@" + botname:
+		case "/media", "/media@" + botname:
 			go u.BotReply(YamlList2String(conf, "影音"))
 
 		case "/sci_fi", "/sci_fi@" + botname:
