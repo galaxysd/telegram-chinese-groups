@@ -141,6 +141,7 @@ https://telegram.me/joinchat/05fe39f501af4d542fbcd38cfcad8ff4 ，
 - 深圳 https://telegram.me/joinchat/046a22350148ef46e7fc866a9c4ea51a
 - 上海 https://telegram.me/joinchat/046a223501418da6cbabac2eb5d27628
 - 香港 https://telegram.me/joinchat/046a223500ed1bb4f6d0c9a8735e8d73
+- 南京 https://telegram.me/joinchat/04a5d082021392a6fcda4d8e90929d15
 - twitter@jinan(济南推友群) https://telegram.me/joinchat/03584ec0011a996c152809bde10e5c80
 
 ## Others
@@ -154,7 +155,7 @@ https://telegram.me/joinchat/05fe39f501af4d542fbcd38cfcad8ff4 ，
 - Telegram 正體中文支援站 http://www.telegram.url.tw
 - Telegram 第三方贴纸收集 https://meta.appinn.com/t/telegram/977
 - Telegram 非官方中文网站 http://telegram-china.org
-- Telegram 非官方汉化资源 @tgcnlang_bot
+- Telegram 非官方汉化资源 [@tgcnlang_bot](http://telegram.me/tgcnlang_bot)
 
 #### tdesktop linux 输入法修复版 :
 Source Code: https://github.com/aphuse/tdesktop<br/>
