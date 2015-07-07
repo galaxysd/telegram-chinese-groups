@@ -117,7 +117,7 @@ func main() {
 				go u.RmMaster(s[1], s[2])
 			} else if len(s) >= 3 && s[0] == "/setrule" {
 				rule := strings.Join(s[2:], " ")
-				go u.SetRule(s[1], msg)
+				go u.SetRule(s[1], rule)
 			}
 		}
 	}
