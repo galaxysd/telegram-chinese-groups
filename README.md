@@ -21,7 +21,7 @@ https://telegram.me/joinchat/05fe39f501af4d542fbcd38cfcad8ff4 ，
 若非特别声明，请勿在群组中发送 [NSFW](https://zh.wikipedia.org/wiki/NSFW) 或政治相关的图片/文字。<br/>
 以上规定适用于大部分群组。
 
-#### 已收录群组数量：108 个
+#### 已收录群组数量：110 个
 
 ## Linux
 - ArchLinux https://telegram.me/joinchat/05a78984013ee018c51a2bca4b5a6548
@@ -32,6 +32,7 @@ https://telegram.me/joinchat/05fe39f501af4d542fbcd38cfcad8ff4 ，
 - Debian https://telegram.me/joinchat/05a78984013745e8522ce0ba8b02002c
 - Linux Mint https://telegram.me/joinchat/05a78984017d9bf84ff8c51d4718b266
 - Ubuntu https://telegram.me/joinchat/05a78984012baf7676de39c19838cfb4
+- Ubuntu 2群 https://telegram.me/joinchat/05a78984012cf4cd6c2f122ddf02200e
 - CentOS https://telegram.me/joinchat/05a789840201e2809786a62e6721fbed
 - Fedora https://telegram.me/joinchat/05b3e08f00bb6ce6aae12fa09ccabca8
 - openSUSE https://telegram.me/joinchat/05a789840163f1ae880fcc480c553417
@@ -105,6 +106,7 @@ https://telegram.me/joinchat/05fe39f501af4d542fbcd38cfcad8ff4 ，
 - WooYun社区 https://telegram.me/joinchat/0575a16a008fa17ec5457b81a4f15abe
 - Happy Money https://telegram.me/joinchat/047728b301af8a22d9ffd381974d7913
 - ShadowsocksX https://telegram.me/joinchat/05f27a290140992e1986099ccb5bf7f6
+- softether VPN https://telegram.me/joinchat/07389d160102226aaf50973aec8565a3
 
 ## 闲聊
 - 酷安1群 https://telegram.me/joinchat/A4PUYwC3Eb55Hb7PtrakWA
