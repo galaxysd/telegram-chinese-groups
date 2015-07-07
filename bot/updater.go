@@ -50,7 +50,7 @@ func (u *Updater) AddMaster(chatid, master string) {
 		u.redis.SAdd("tgGroupMasters:"+chatid, master)
 	}
 	masters := u.redis.SMembers("tgGroupMasters:" + chatid).Val()
-	mastersStr = strings.Join(masters, ",")
+	mastersStr := strings.Join(masters, ",")
 	msg := tgbotapi.NewMessage(u.update.Message.Chat.ID, "Masters Update:[ "+mastersStr+" ]")
 	u.bot.SendMessage(msg)
 }
@@ -62,7 +62,7 @@ func (u *Updater) RmMaster(chatid, master string) {
 		u.redis.SRem("tgGroupMasters:"+chatid, master)
 	}
 	masters := u.redis.SMembers("tgGroupMasters:" + chatid).Val()
-	mastersStr = strings.Join(masters, ",")
+	mastersStr := strings.Join(masters, ",")
 	msg := tgbotapi.NewMessage(u.update.Message.Chat.ID, "Masters Update:[ "+mastersStr+" ]")
 	u.bot.SendMessage(msg)
 }
