@@ -187,7 +187,7 @@ func (u *Updater) Broadcast(msgText string) {
 				msg := tgbotapi.NewMessage(chatid, msgText)
 				go func() {
 					u.bot.SendMessage(msg)
-					log.Println(chatIDStr + " --- done")
+					log.Println(k + " --- done")
 				}()
 			}
 		}
