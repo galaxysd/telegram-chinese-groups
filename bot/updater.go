@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/Syfaro/telegram-bot-api"
@@ -15,6 +16,78 @@ type Updater struct {
 	bot    *tgbotapi.BotAPI
 	update tgbotapi.Update
 	conf   *yaml.File
+}
+
+func (u *Updater) Start() {
+	if u.update.Message.Chat.ID < 0 && !u.redis.HExists("tgGroups",
+		strconv.Itoa(u.update.Message.Chat.ID)).Val() {
+		u.redis.HSet("tgGroups",
+			strconv.Itoa(u.update.Message.Chat.ID), u.update.Message.Chat.Title)
+		log.Printf("%d --- %s join", u.update.Message.Chat.ID, u.update.Message.Chat.Title)
+	}
+	u.BotReply(YamlList2String(u.conf, "help"))
+}
+
+func (u *Updater) ListGroups() {
+	if u.update.Message.Chat.ID > 0 {
+		groups := u.redis.HGetAllMap("tgGroups").Val()
+		var messages []string
+		for groupID, groupTitle := range groups {
+			masters := u.redis.SMembers("tgGroupMasters:" + groupID).Val()
+			mastersStr := strings.Join(masters, ",")
+			messages = append(messages, groupID+" --- "+groupTitle+" [ "+mastersStr+" ] ")
+		}
+		message := strings.Join(messages, "\n")
+		msg := tgbotapi.NewMessage(u.update.Message.Chat.ID, message)
+		u.bot.SendMessage(msg)
+	}
+}
+
+func (u *Updater) AddMaster(chatid, master string) {
+	superMaster, _ := u.conf.Get("master")
+	if u.update.Message.Chat.UserName == superMaster {
+		log.Println("add master @" + master + " to " + chatid)
+		u.redis.SAdd("tgGroupMasters:"+chatid, master)
+	}
+	masters := u.redis.SMembers("tgGroupMasters:" + chatid).Val()
+	mastersStr = strings.Join(masters, ",")
+	msg := tgbotapi.NewMessage(u.update.Message.Chat.ID, "Masters Update:[ "+mastersStr+" ]")
+	u.bot.SendMessage(msg)
+}
+
+func (u *Updater) RmMaster(chatid, master string) {
+	superMaster, _ := u.conf.Get("master")
+	if u.update.Message.Chat.UserName == superMaster {
+		log.Println("remove master @" + master + " from " + chatid)
+		u.redis.SRem("tgGroupMasters:"+chatid, master)
+	}
+	masters := u.redis.SMembers("tgGroupMasters:" + chatid).Val()
+	mastersStr = strings.Join(masters, ",")
+	msg := tgbotapi.NewMessage(u.update.Message.Chat.ID, "Masters Update:[ "+mastersStr+" ]")
+	u.bot.SendMessage(msg)
+}
+
+func (u *Updater) SetRule(chatid, rule string) {
+	superMaster, _ := u.conf.Get("master")
+	if u.redis.SIsMember("tgGroupMasters:"+
+		chatid, u.update.Message.Chat.UserName).Val() ||
+		u.update.Message.Chat.UserName == superMaster {
+		log.Println("setting rule " + rule + " to " + chatid)
+		u.redis.Set("tgGroupRule:"+chatid, rule, -1)
+		msg := tgbotapi.NewMessage(u.update.Message.Chat.ID, "Rule Update!")
+		u.bot.SendMessage(msg)
+	}
+}
+
+func (u *Updater) Rule() {
+	if u.redis.Exists("tgGroupRule:" +
+		strconv.Itoa(u.update.Message.Chat.ID)).Val() {
+		msg := tgbotapi.NewMessage(u.update.Message.Chat.ID,
+			u.redis.Get("tgGroupRule:"+strconv.Itoa(u.update.Message.Chat.ID)).Val())
+		u.bot.SendMessage(msg)
+	} else {
+		u.BotReply(YamlList2String(u.conf, "rules"))
+	}
 }
 
 func (u *Updater) BotReply(msgText string) {
@@ -48,11 +121,18 @@ func (u *Updater) BotReply(msgText string) {
 
 func (u *Updater) Subscribe() {
 	chatIDStr := strconv.Itoa(u.update.Message.Chat.ID)
-	u.redis.HSet("tgSubscribe", chatIDStr, strconv.FormatBool(true))
-	u.redis.HIncrBy("tgSubscribeTimes", chatIDStr, 1)
-	msg := tgbotapi.NewMessage(u.update.Message.Chat.ID,
-		"订阅成功\n以后奴家知道新的群组的话，会第一时间告诉你哟😊\n(订阅仅对当前会话有效)")
-	u.bot.SendMessage(msg)
+	isSubscribe, _ := strconv.ParseBool(u.redis.HGet("tgSubscribe", chatIDStr).Val())
+	if isSubscribe {
+		msg := tgbotapi.NewMessage(u.update.Message.Chat.ID,
+			"已经订阅过，就不要重复订阅啦😘")
+		u.bot.SendMessage(msg)
+	} else {
+		u.redis.HSet("tgSubscribe", chatIDStr, strconv.FormatBool(true))
+		u.redis.HIncrBy("tgSubscribeTimes", chatIDStr, 1)
+		msg := tgbotapi.NewMessage(u.update.Message.Chat.ID,
+			"订阅成功\n以后奴家知道新的群组的话，会第一时间告诉你哟😊\n(订阅仅对当前会话有效)")
+		u.bot.SendMessage(msg)
+	}
 }
 
 func (u *Updater) UnSubscribe() {

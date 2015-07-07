@@ -53,10 +53,10 @@ func main() {
 		switch update.Message.Text {
 
 		case "/help", "/start", "/help@" + botname, "/start@" + botname:
-			go u.BotReply(YamlList2String(conf, "help"))
+			go u.Start()
 
 		case "/rules", "/rules@" + botname:
-			go u.BotReply(YamlList2String(conf, "rules"))
+			go u.Rule()
 
 		case "/about", "/about@" + botname:
 			go u.BotReply(YamlList2String(conf, "about"))
@@ -103,11 +103,21 @@ func main() {
 		case "/unsubscribe", "/unsubscribe@" + botname:
 			go u.UnSubscribe()
 
+		case "/list":
+			go u.ListGroups()
+
 		default:
 			s := strings.Split(update.Message.Text, " ")
-			if len(s) > 1 && s[0] == "/broadcast" {
+			if len(s) >= 2 && s[0] == "/broadcast" {
 				msg := strings.Join(s[1:], " ")
 				go u.Broadcast(msg)
+			} else if len(s) >= 3 && s[0] == "/addmaster" {
+				go u.AddMaster(s[1], s[2])
+			} else if len(s) >= 3 && s[0] == "/rmmaster" {
+				go u.RmMaster(s[1], s[2])
+			} else if len(s) >= 3 && s[0] == "/setrule" {
+				rule := strings.Join(s[2:], " ")
+				go u.SetRule(s[1], msg)
 			}
 		}
 	}
