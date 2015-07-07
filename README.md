@@ -21,7 +21,7 @@ https://telegram.me/joinchat/05fe39f501af4d542fbcd38cfcad8ff4 ，
 若非特别声明，请勿在群组中发送 [NSFW](https://zh.wikipedia.org/wiki/NSFW) 或政治相关的图片/文字。<br/>
 以上规定适用于大部分群组。
 
-#### 已收录群组数量：106 个
+#### 已收录群组数量：107 个
 
 ## Linux
 - ArchLinux https://telegram.me/joinchat/05a78984013ee018c51a2bca4b5a6548
@@ -40,6 +40,7 @@ https://telegram.me/joinchat/05fe39f501af4d542fbcd38cfcad8ff4 ，
 - Linux User Group https://telegram.me/joinchat/05e726a3022b42ab63e5215ace899999
 - Linux 2群 https://telegram.me/joinchat/05a7898402396d49fba6c1bea0e6f037
 - Deepin Linux https://telegram.me/joinchat/05b867b302477295ece219622624f0b3
+- SUSE Fans https://telegram.me/joinchat/05d322a801c7107674cb5366e96da83a
 
 ## Programming
 - Clang (C语言) https://telegram.me/joinchat/059708e0014e50b8d4ba97dd51ae3a48
