@@ -34,7 +34,10 @@ func (u *Updater) ListGroups() {
 		var messages []string
 		for groupID, groupTitle := range groups {
 			masters := u.redis.SMembers("tgGroupMasters:" + groupID).Val()
-			mastersStr := strings.Join(masters, ",")
+			for k, v := range masters {
+				masters[k] = "@" + v
+			}
+			mastersStr := strings.Join(masters, " , ")
 			messages = append(messages, groupID+" --- "+groupTitle+" [ "+mastersStr+" ] ")
 		}
 		message := strings.Join(messages, "\n")
@@ -50,8 +53,11 @@ func (u *Updater) AddMaster(chatid, master string) {
 		u.redis.SAdd("tgGroupMasters:"+chatid, master)
 	}
 	masters := u.redis.SMembers("tgGroupMasters:" + chatid).Val()
-	mastersStr := strings.Join(masters, ",")
-	msg := tgbotapi.NewMessage(u.update.Message.Chat.ID, "Masters Update:[ "+mastersStr+" ]")
+	for k, v := range masters {
+		masters[k] = "@" + v
+	}
+	mastersStr := strings.Join(masters, " , ")
+	msg := tgbotapi.NewMessage(u.update.Message.Chat.ID, "Masters Update: [ "+mastersStr+" ]")
 	u.bot.SendMessage(msg)
 }
 
@@ -62,8 +68,11 @@ func (u *Updater) RmMaster(chatid, master string) {
 		u.redis.SRem("tgGroupMasters:"+chatid, master)
 	}
 	masters := u.redis.SMembers("tgGroupMasters:" + chatid).Val()
-	mastersStr := strings.Join(masters, ",")
-	msg := tgbotapi.NewMessage(u.update.Message.Chat.ID, "Masters Update:[ "+mastersStr+" ]")
+	for k, v := range masters {
+		masters[k] = "@" + v
+	}
+	mastersStr := strings.Join(masters, " , ")
+	msg := tgbotapi.NewMessage(u.update.Message.Chat.ID, "Masters Update: [ "+mastersStr+" ]")
 	u.bot.SendMessage(msg)
 }
 
