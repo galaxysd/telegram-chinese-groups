@@ -178,26 +178,19 @@ func (u *Updater) Broadcast(msgText string) {
 
 		subStates := u.redis.HGetAllMap("tgSubscribe").Val()
 
-		chs := make(map[string]chan bool)
 		for k, v := range subStates {
 			chatid, _ := strconv.Atoi(k)
 			subState, _ := strconv.ParseBool(v)
-			chs[k] = make(chan bool)
 
 			if subState && chatid > 0 {
 				log.Printf("sending boardcast to %d ...", chatid)
 				msg := tgbotapi.NewMessage(chatid, msgText)
-				go func(ch chan bool) {
+				go func() {
 					u.bot.SendMessage(msg)
-					ch <- true
-				}(chs[k])
+					log.Println(chatIDStr + " --- done")
+				}()
 			}
 		}
 
-		for k, v := range chs {
-			if <-v {
-				log.Println(k + " --- done")
-			}
-		}
 	}
 }
