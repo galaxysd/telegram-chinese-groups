@@ -3,7 +3,6 @@ package main
 import (
 	"log"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/Syfaro/telegram-bot-api"
@@ -28,74 +27,41 @@ func (u *Updater) Start() {
 	u.BotReply(YamlList2String(u.conf, "help"))
 }
 
-func (u *Updater) ListGroups() {
-	if u.update.Message.Chat.ID > 0 {
-		groups := u.redis.HGetAllMap("tgGroups").Val()
-		var messages []string
-		for groupID, groupTitle := range groups {
-			masters := u.redis.SMembers("tgGroupMasters:" + groupID).Val()
-			for k, v := range masters {
-				masters[k] = "@" + v
-			}
-			mastersStr := strings.Join(masters, " , ")
-			messages = append(messages, groupID+" --- "+groupTitle+" [ "+mastersStr+" ] ")
+func (u *Updater) SetRule(rule string) {
+	if u.update.Message.Chat.ID < 0 {
+		chatIDStr := strconv.Itoa(u.update.Message.Chat.ID)
+		log.Printf("setting rule %s to %s", rule, chatIDStr)
+		u.redis.Set("tgGroupRule:"+chatIDStr, rule, -1)
+		msg := tgbotapi.NewMessage(u.update.Message.Chat.ID, "新的群组规则Get！✔️\n以下是新的规则：\n\n"+rule)
+		u.bot.SendMessage(msg)
+	}
+}
+
+func (u *Updater) AutoRule() {
+	if u.update.Message.Chat.ID < 0 {
+		chatIDStr := strconv.Itoa(u.update.Message.Chat.ID)
+		if u.redis.Exists("tgGroupAutoRule:" + chatIDStr).Val() {
+			u.redis.Del("tgGroupAutoRule:" + chatIDStr)
+			msg := tgbotapi.NewMessage(u.update.Message.Chat.ID, "AutoRule Disable!")
+			u.bot.SendMessage(msg)
+		} else {
+			u.redis.Set("tgGroupAutoRule:"+chatIDStr, strconv.FormatBool(true), -1)
+			msg := tgbotapi.NewMessage(u.update.Message.Chat.ID, "AutoRule Enable!")
+			u.bot.SendMessage(msg)
 		}
-		message := strings.Join(messages, "\n")
-		msg := tgbotapi.NewMessage(u.update.Message.Chat.ID, message)
-		u.bot.SendMessage(msg)
-	}
-}
-
-func (u *Updater) AddMaster(chatid, master string) {
-	superMaster, _ := u.conf.Get("master")
-	if u.update.Message.Chat.UserName == superMaster {
-		log.Println("add master @" + master + " to " + chatid)
-		u.redis.SAdd("tgGroupMasters:"+chatid, master)
-	}
-	masters := u.redis.SMembers("tgGroupMasters:" + chatid).Val()
-	for k, v := range masters {
-		masters[k] = "@" + v
-	}
-	mastersStr := strings.Join(masters, " , ")
-	msg := tgbotapi.NewMessage(u.update.Message.Chat.ID, "Masters Update: [ "+mastersStr+" ]")
-	u.bot.SendMessage(msg)
-}
-
-func (u *Updater) RmMaster(chatid, master string) {
-	superMaster, _ := u.conf.Get("master")
-	if u.update.Message.Chat.UserName == superMaster {
-		log.Println("remove master @" + master + " from " + chatid)
-		u.redis.SRem("tgGroupMasters:"+chatid, master)
-	}
-	masters := u.redis.SMembers("tgGroupMasters:" + chatid).Val()
-	for k, v := range masters {
-		masters[k] = "@" + v
-	}
-	mastersStr := strings.Join(masters, " , ")
-	msg := tgbotapi.NewMessage(u.update.Message.Chat.ID, "Masters Update: [ "+mastersStr+" ]")
-	u.bot.SendMessage(msg)
-}
-
-func (u *Updater) SetRule(chatid, rule string) {
-	superMaster, _ := u.conf.Get("master")
-	if u.redis.SIsMember("tgGroupMasters:"+
-		chatid, u.update.Message.Chat.UserName).Val() ||
-		u.update.Message.Chat.UserName == superMaster {
-		log.Println("setting rule " + rule + " to " + chatid)
-		u.redis.Set("tgGroupRule:"+chatid, rule, -1)
-		msg := tgbotapi.NewMessage(u.update.Message.Chat.ID, "Rule Update!")
-		u.bot.SendMessage(msg)
 	}
 }
 
 func (u *Updater) Rule() {
-	if u.redis.Exists("tgGroupRule:" +
-		strconv.Itoa(u.update.Message.Chat.ID)).Val() {
+	chatIDStr := strconv.Itoa(u.update.Message.Chat.ID)
+	if u.redis.Exists("tgGroupRule:" + chatIDStr).Val() {
 		msg := tgbotapi.NewMessage(u.update.Message.Chat.ID,
-			u.redis.Get("tgGroupRule:"+strconv.Itoa(u.update.Message.Chat.ID)).Val())
+			u.redis.Get("tgGroupRule:"+chatIDStr).Val())
 		u.bot.SendMessage(msg)
 	} else {
-		u.BotReply(YamlList2String(u.conf, "rules"))
+		msg := tgbotapi.NewMessage(u.update.Message.Chat.ID,
+			YamlList2String(u.conf, "rules"))
+		u.bot.SendMessage(msg)
 	}
 }
 
@@ -185,12 +151,11 @@ func (u *Updater) Broadcast(msgText string) {
 			if subState && chatid > 0 {
 				log.Printf("sending boardcast to %d ...", chatid)
 				msg := tgbotapi.NewMessage(chatid, msgText)
-				go func() {
+				go func(k string) {
 					u.bot.SendMessage(msg)
 					log.Println(k + " --- done")
-				}()
+				}(k)
 			}
 		}
-
 	}
 }

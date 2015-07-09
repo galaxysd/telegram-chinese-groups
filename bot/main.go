@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -38,16 +39,28 @@ func main() {
 
 	for update := range updates {
 
-		log.Printf("[%d](%s) -- [%s] -- %s",
-			update.Message.Chat.ID, update.Message.Chat.Title,
-			update.Message.From.UserName, update.Message.Text,
-		)
-
 		u := Updater{
 			redis:  rc,
 			bot:    bot,
 			update: update,
 			conf:   conf,
+		}
+
+		startWithSlash, _ := regexp.MatchString("^/", update.Message.Text)
+		atBot, _ := regexp.MatchString("@"+botname, update.Message.Text)
+
+		if update.Message.Chat.ID > 0 || startWithSlash || atBot {
+			log.Printf("[%d](%s) -- [%s] -- %s",
+				update.Message.Chat.ID, update.Message.Chat.Title,
+				update.Message.From.UserName, update.Message.Text,
+			)
+		}
+
+		if update.Message.NewChatParticipant.ID != 0 {
+			chatIDStr := strconv.Itoa(u.update.Message.Chat.ID)
+			if u.redis.Exists("tgGroupAutoRule:" + chatIDStr).Val() {
+				go u.Rule()
+			}
 		}
 
 		switch update.Message.Text {
@@ -103,21 +116,17 @@ func main() {
 		case "/unsubscribe", "/unsubscribe@" + botname:
 			go u.UnSubscribe()
 
-		case "/list":
-			go u.ListGroups()
+		case "/autorule":
+			go u.AutoRule()
 
 		default:
 			s := strings.Split(update.Message.Text, " ")
 			if len(s) >= 2 && s[0] == "/broadcast" {
 				msg := strings.Join(s[1:], " ")
 				go u.Broadcast(msg)
-			} else if len(s) >= 3 && s[0] == "/addmaster" {
-				go u.AddMaster(s[1], s[2])
-			} else if len(s) >= 3 && s[0] == "/rmmaster" {
-				go u.RmMaster(s[1], s[2])
-			} else if len(s) >= 3 && s[0] == "/setrule" {
-				rule := strings.Join(s[2:], " ")
-				go u.SetRule(s[1], rule)
+			} else if len(s) >= 2 && s[0] == "/setrule" {
+				rule := strings.Join(s[1:], " ")
+				go u.SetRule(rule)
 			}
 		}
 	}
